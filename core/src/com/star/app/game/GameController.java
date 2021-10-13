@@ -16,12 +16,17 @@ public class GameController {
     private ParticleController particleController;
     private PowerUpsController powerUpsController;
     private Hero hero;
+    private Bot bot;
     private Vector2 tmpVec;
     private Stage stage;
     private boolean pause;
     private int level;
     private float roundTimer;
     private Music music;
+
+    public Bot getBot() {
+        return bot;
+    }
 
     public float getRoundTimer() {
         return roundTimer;
@@ -66,6 +71,7 @@ public class GameController {
     public GameController(SpriteBatch batch) {
         this.background = new Background(this);
         this.hero = new Hero(this);
+        this.bot = new Bot(this);
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
@@ -98,6 +104,9 @@ public class GameController {
         roundTimer += dt;
         background.update(dt);
         hero.update(dt);
+        if (bot.isAlive()) {
+            bot.update(dt);
+        }
         asteroidController.update(dt);
         bulletController.update(dt);
         powerUpsController.update(dt);
@@ -164,6 +173,14 @@ public class GameController {
                     }
                     break;
                 }
+            }
+            if (hero.getHitArea().contains(b.getPosition())) {
+                b.deactivate();
+                hero.takeDamage(level * 2);
+            }
+            if (bot.getHitArea().contains(b.getPosition())) {
+                b.deactivate();
+                bot.takeDamage(1);
             }
         }
 
